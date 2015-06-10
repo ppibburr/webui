@@ -13,11 +13,12 @@ void main() {
 	pwm.period = 8000;
 	pwm.enabled = true; 
 	
-    var pin = new GPIO(7);
-    pin.direction = GPIO.Direction.OUT;
+        var pin = new GPIO(7);
+        pin.direction = GPIO.Direction.OUT;
 	
 	var app = new App(8048, "/test");
-	var view = new View("main");	
+	var view = new View("main");
+	app.add_view(view);
 	
 	var b = new Button("Toggle");
 	view.attach(b);	
