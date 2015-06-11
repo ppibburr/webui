@@ -18,6 +18,14 @@
  */
 using Neutron;
 namespace WebUI {
+	public string? data_dir() {
+		var q = Environment.get_variable ("WEBUI_DATA_DIR");
+		if (q == null) {
+			return "./share/webui/data";
+		}	
+		return q;
+    }
+	
 	public class App : GLib.Object {
 		public Http.Server http {get; construct set;}
 		public string route {get; construct set;}	
@@ -55,7 +63,7 @@ namespace WebUI {
 				var entity = new Websocket.HttpUpgradeEntity();
 				entity.incoming.connect(on_incoming_ws);
 				container.set_entity(entity);
-			} else if ( FileUtils.test("data/"+request.path, FileTest.EXISTS)) {
+			} else if ( FileUtils.test(@"$(data_dir())/"+request.path, FileTest.EXISTS)) {
 				string data = "";
 				size_t len;
 				string mime = "html";
@@ -67,7 +75,7 @@ namespace WebUI {
 					mime = "javascript";
 				}
 				
-				FileUtils.get_contents("data/"+request.path, out data, out len);
+				FileUtils.get_contents(@"$(data_dir())/"+request.path, out data, out len);
 				container.set_entity(new Http.StaticEntity(@"text/%s".printf(mime), data));
 			}
 			
@@ -138,7 +146,7 @@ namespace WebUI {
 		  string initializers = "";
 		  size_t len;
 		  
-		  FileUtils.get_contents("data/template.html", out template, out len);
+		  FileUtils.get_contents(@"$(data_dir())/template.html", out template, out len);
 
           string content = "";
           foreach (var view in views) {
