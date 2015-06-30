@@ -3,37 +3,26 @@ GLib/GObject library that allows system applications to have a Web-based UI with
 
 Example
 ===
-```vala
-using BBB;
+```
 using WebUI;
 
-void main() {	
-	var pwm = new PWM(3);
-	pwm.duty_cycle = 55000;
-	pwm.period = 8000;
-	pwm.enabled = true; 
-	
-        var pin = new GPIO(7);
-        pin.direction = GPIO.Direction.OUT;
-	
-	var app = new App(8048, "/test");
-	var view = new View("main");
-	app.add_view(view);
-	
-	var b = new Button("Toggle");
-	view.attach(b);	
-	
-	b.activate.connect(() => {
-		pin.state = !pin.state;
-	});	
-		
-	var slide = new Slider();
-	slide.attach_to(view);
-	
-	slide.change.connect((data)=>{
-		pwm.duty_cycle = data * 500;
+void main() {
+	var srv = new Service(8080);
+
+	srv.route("/foo", (conn) => {
+	  var view = new View(conn, "view_1");
+	  var s1   = new Slider(view);
+	  
+	  s1.changed.connect((data) => {
+		print(@"$data\n");
+	  }); 
+	  
+	  view.add(s1);
 	});
 	
-	new GLib.MainLoop().run();
+	
+
+	new MainLoop().run();
 }
+
 ```
