@@ -3,7 +3,7 @@ GLib/GObject library that allows system applications to have a Web-based UI with
 
 Example
 ===
-```
+```vala
 using WebUI;
 
 void main() {
