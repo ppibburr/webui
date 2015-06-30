@@ -2,6 +2,7 @@ namespace WebUI {
 	using Gee;
 	using Neutron;
 	
+	// Can't store delegate types as properties.... bleh
 	public class DumbStruct {
 		public Service.connection_func func;
 		
@@ -10,6 +11,7 @@ namespace WebUI {
 		}
 	}
 	
+	// Super cool
 	public class Service : Object {
 		public uint port {get; construct;}
 		[CCode (has_target = false)]
@@ -61,6 +63,8 @@ namespace WebUI {
 			server.select_entity.connect(handle);			
 		}
 		
+		// Find an mime-type for a given extension
+		// NOT a very complete list
 		public string get_mime_type(string ext) {
 			switch (ext) {
 				case "js":
@@ -80,6 +84,7 @@ namespace WebUI {
 			}
 		}
 		
+		// Return mime-type and content for +path+
 		public string[]? serve(owned string path) {
 			print(@"PATH: $path\n");
 			if (path in routes.keys) {
@@ -124,15 +129,20 @@ namespace WebUI {
 			return {buff, mime};
 		}
 		
+		// Determine what to for an Request
 		public void handle (Http.Request request, Http.EntitySelectContainer container) {
-			print("%s\n", request.path);
+			// print("%s\n", request.path);
+			
 			foreach (var apath in routes.keys) {				
 				if (request.path == @"$apath/socket") {
+					// path is a WebSocket
+					
 					on_socket(apath, container);
 					return;
 				}
 			}			
 			
+			// Path is either, Application, File, or NOT_HANDLED
 			var res = serve(request.path);
 		    
 		    if (res != null) {
@@ -141,23 +151,26 @@ namespace WebUI {
 
 		}
 		
+		// Return the core HTML/JavaScript
 		public string render_libwebui(string route) {
 			string buff = "";
 			FileUtils.get_contents(data_dir+"/template.html",out buff, null);
 			return buff.printf("ws", "127.0.0.1:8080%s".printf(route));
 		}
 		
+		// Adds a new route to handle
 		public void route(string path, connection_func fun) {
 		  routes[path] = new DumbStruct(fun);
 		}
 		
+		// Instantiate an Application
 		protected void on_socket(string route, Http.EntitySelectContainer container) {
 			var entity = new Websocket.HttpUpgradeEntity();
 			entity.incoming.connect((conn) => {
 				var c = new Connection(conn, route);
 				connections[c.id] = c;
 				routes[route].func(c);
-				c.exec(@"webui.load_content('$route', '$(c.id)');");
+				c.init(route);
 			});
 			container.set_entity(entity);
 		}

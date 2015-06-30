@@ -1,8 +1,11 @@
 namespace WebUI {
 	public interface MouseEvents : Widget {
+		// Mouse button down
 		public signal void mouse_down();
+		// "          " up
 		public signal void mouse_up();
 		
+		// Attach all mouse events
 		public virtual void attach_mouse_events() {
 			event.connect((type, data)=>{
 				switch (type) {
@@ -18,7 +21,15 @@ namespace WebUI {
 		}
 	}
 	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 */
 	public class Button : Widget, MouseEvents {
+		// CLICK-ed
 		public signal void clicked();
 		
 		public Button(View view, string? id=null) {
@@ -55,8 +66,88 @@ namespace WebUI {
 		}		
 	}	
 	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 */
 	public class Slider : Widget {
 		public signal void changed(int val);
+		
+		private int _step = 1;
+		public int step {
+			get {
+				return _step;
+			} set {
+				_step = value;			
+							
+				if (!socket.ready) {
+				  return;	
+				}
+				
+				socket.exec("$('#%s').step(%d)".printf(id,value));
+			}
+		}
+		
+		private int _tick_interval = 5;
+		public int tick_interval {
+			get {
+				return _tick_interval;
+			} set {
+				_tick_interval = value;			
+							
+				if (!socket.ready) {
+				  return;	
+				}
+				
+				socket.exec("$('#%s').ticksFrequency(%d)".printf(id,value));
+			}
+		}
+		
+		private int _value;
+		public int @value {
+			get {
+				return _value;
+			}
+			set {
+				_value = value;
+				
+			
+				if (!socket.ready) {
+				  return;	
+				}
+							
+				socket.exec("$('#%s').val(%d)".printf(id, value));
+			}
+		}
+		
+		private int _max = 100;
+		public int max { get {
+			return _max;
+		} set {
+			_max = value;
+			
+			if (!socket.ready) {
+			  return;	
+			}
+						
+			socket.exec("$('#%s').max(%d)".printf( id, value));
+		}}
+		
+		private int _min = 0;
+		public int min { get {
+			return _min;
+		} set {
+			_min = value;
+			
+			if (!socket.ready) {
+			  return;	
+			}
+			
+			socket.exec("$('#%s').min(%d)".printf(id, value));
+		}}		
 		
 		public Slider(View view, string? id=null) {
 			base(view, id);
@@ -66,7 +157,8 @@ namespace WebUI {
 		  event.connect((type, data)=>{
 			  switch (type) {
 				  case EventType.CHANGED:
-				  changed(int.parse(data));
+				  this._value = int.parse(data);
+				  changed(this.value);
 				  break;
 			  }
 		  });	
@@ -82,14 +174,23 @@ namespace WebUI {
 		
 		public override string jsui_code() {
 			return """
-            $('#%s').jqxSlider({ theme:'android', min: 0, max: 100, ticksFrequency: 5, value: 0, step: 1});
+            $('#%s').jqxSlider({ theme:'android', min: %d, max: %d, ticksFrequency: %d, value: %d, step: %d});
             $('#%s').on('change', function (event) {
                 webui.event_full(event.target.id, 'changed' ,$(event.target).val());
             });			
-			""".printf(id,id);
+			""".printf(id,min, max, tick_interval, this.value, step, id);
 		}
 	}	
 	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	public class Switch : Widget {
 	  public signal void changed(bool val);
 	  
@@ -122,7 +223,14 @@ namespace WebUI {
 	  }
 	}
 	
-	//
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	public class Range : Widget {
       public signal void changed(int min, int max);		
 		
@@ -158,7 +266,15 @@ namespace WebUI {
 	  }
 	}
 	
-	//
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	public class Graph : Widget {
 	  public Graph(View view, string? id = null) {
 		  base(view, id);

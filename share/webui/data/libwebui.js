@@ -1,6 +1,16 @@
-var webui = {};
+// Uber Object
+//
+// Utilities to bridge to Connection of Service
+var webui = {
+	// how many views have been initialized 
+	// 		(used to tell the application when a Connection is 'ready')
+	n_views: 0
+};
+
 webui.connect = function(proto, route) {
+		// Kinda important
 		webui.socket = new WebSocket(proto+"://"+route+"/socket");
+		
 		this.socket.onopen = function() {
 
 		}
@@ -10,18 +20,21 @@ webui.connect = function(proto, route) {
 		}
 		
 		this.socket.onerror = function() {
-
 				webui.socket.close();
 		}
 		
 		this.socket.onmessage = function(msg) {
            raw = msg.data.split(":");
-           console.log(msg.data);
+          
            if (raw[0] == "exec") {
+			   // Execute code send from Application
+			   
 			   raw.shift();
 			   new Function(raw.join(":"))();
+			   
 		   } else if (raw[0] == "request") {
-			   console.log("tree");
+			   // Send data to the Application
+			   
 			   raw.shift();
 			   id = raw[0];
 			   raw.shift();
@@ -37,10 +50,12 @@ webui.send = function(val) {
 		webui.socket.send(val);
 }
 
+// Sends an Event with data
 webui.event_full = function(id, type, val) {
 	webui.send("event:"+id.toString()+":"+type+":"+val.toString());
 }
 
+// Sends an event without data
 webui.event = function(id,type) {
 	webui.event_full(id, type);
 }
@@ -49,6 +64,7 @@ webui.disconnect = function() {
 		webui.socket.close();
 }
 
+// BwaHaHa
 webui.fetch = function(url, succ)
 {
 
@@ -66,10 +82,10 @@ webui.fetch = function(url, succ)
   xmlhttp.send();
 }
 
-
+// Loads the UI
 webui.load_content = function(route,id) {
 	webui.fetch(route+"/connection/"+id, function(res) {
 		document.body.innerHTML = res;
-		webui.send("initialize");
+		webui.send("initialize"); // tells the application to send us View initializers 
 	});
 }
