@@ -1,16 +1,26 @@
-<!doctype html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="jqmtheme.css">
-    <script src="jq.js"></script>
-    <script src="jqm.js"></script>
-    <script src="lib.js"></script>    
-	<script>
-	%s
-</script>
-</head>
-<body>
-	%s
-</body>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+		<link rel="stylesheet" href="/jqx.base.css" type="text/css" />
+		<link rel="stylesheet" href="/jqx.android.css" type="text/css" />
+		<link rel="stylesheet" href="/jqx.mobile.css" type="text/css" />        
+
+		<script type="text/javascript" src="/jquery.js"></script>
+		<script type="text/javascript" src="/jqxcore.js"></script>
+		<script type="text/javascript" src="/jqxbuttons.js"></script>
+		<script type="text/javascript" src="/jqxcheckbox.js"></script>
+		<script type="text/javascript" src="/jqxslider.js"></script>   
+		
+		<!-- libwebui.js-->
+		<script type="text/javascript" src="/libwebui.js"></script>  
+		
+				
+		<script> 
+			webui.connect('%s', '%s');
+		</script>
+  </head>   
+  <body>
+  
+  </body>
 </html>

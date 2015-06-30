@@ -1,5 +1,5 @@
 all:
-	valac --pkg neutron --library=WebUI --vapi=webui.vapi -H webui.h src/*.vala -X -fPIC -X -shared -o libwebui.so
+	valac --pkg neutron --pkg gee-1.0 --library=WebUI --vapi=webui.vapi -H webui.h src/*.vala -X -fPIC -X -shared -o libwebui.so
     
 
 clean:

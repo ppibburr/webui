@@ -8,4 +8,3 @@ Description: GLib/GObject library that allows to Develop system applications wit
 Version: 0.1.0
 Libs: -L${libdir} -lwebui
 Cflags: -I${includedir}
-
